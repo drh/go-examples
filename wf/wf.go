@@ -2,52 +2,44 @@ package main
 
 import (
 	"fmt"
+	"go-examples/internal/sortedmapkeys"
+	"go-examples/internal/tokens"
 	"io"
 	"os"
 	"strings"
 	"text/scanner"
 )
 
+const minLength = 3
+
 func main() {
-	minLen := 3
-	frequencies := map[string]int{}
-	process := func(s scanner.Scanner) {
-		if len(s.TokenText()) >= minLen {
-			frequencies[strings.ToLower(s.TokenText())]++
-		}
-	}
-	if len(os.Args) < 2 { // read from stdin
-		ScanTokens(os.Stdin, "", process)
-		for k, v := range frequencies {
-			fmt.Printf("%d %s\n", v, k)
-		}
-		return
-	}
 	for _, fileName := range os.Args[1:] {
 		f, err := os.Open(fileName)
-		if err != nil {
+		if err == nil {
+			wf(f, fileName)
+			f.Close()
+		} else {
 			fmt.Fprintln(os.Stderr, err)
-			continue
 		}
-		ScanTokens(f, fileName, process)
-		fmt.Printf("%s:\n", fileName)
-		for k, v := range frequencies {
-			fmt.Printf("%d %s\n", v, k)
-		}
-		f.Close()
-		clear(frequencies)
+	}
+	if len(os.Args) == 1 { // read from stdin
+		wf(os.Stdin, "")
 	}
 }
 
-type processToken func(scanner.Scanner)
-
-func ScanTokens(src io.Reader, fileName string, process processToken) {
-	var s scanner.Scanner
-	s.Init(src)
-	s.Filename = fileName
-	for tok := s.Scan(); tok != scanner.EOF; tok = s.Scan() {
-		if tok == scanner.Ident {
-			process(s)
+func wf(src io.Reader, fileName string) {
+	frequencies := map[string]int{}
+	tokens.Scan(src, fileName, func(s scanner.Scanner) {
+		if len(s.TokenText()) >= minLength {
+			frequencies[strings.ToLower(s.TokenText())]++
 		}
+	})
+	if fileName != "" {
+		fmt.Printf("%s:\n", fileName)
+	}
+	// Sort on values
+	keys := sortedmapkeys.SortByValue(frequencies)
+	for _, k := range keys {
+		fmt.Printf("%d %s\n", frequencies[k], k)
 	}
 }
