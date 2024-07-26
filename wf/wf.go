@@ -29,7 +29,7 @@ func main() {
 
 func wf(src io.Reader, fileName string) {
 	frequencies := map[string]int{}
-	tokens.Scan(src, fileName, func(s scanner.Scanner) {
+	tokens.ScanWords(src, fileName, func(s scanner.Scanner) {
 		if len(s.TokenText()) >= minLength {
 			frequencies[strings.ToLower(s.TokenText())]++
 		}
