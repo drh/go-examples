@@ -29,6 +29,6 @@ func ScanIdentifiers(src io.Reader, fileName string, process ProcessToken) {
 	var s scanner.Scanner
 	s.Init(src)
 	s.Filename = fileName
-	s.Mode = scanner.ScanIdents | scanner.SkipComments | scanner.ScanComments
+	s.Mode = scanner.GoTokens
 	Scan(s, src, process)
 }

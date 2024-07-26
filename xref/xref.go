@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-examples/internal/sortedmapkeys"
 	"go-examples/internal/tokens"
+	"go/token"
 	"io"
 	"os"
 	"text/scanner"
@@ -70,23 +71,23 @@ func printLineNumbers(lineNumbers []int, sep string) {
 }
 
 func xref(src io.Reader, fileName string, identifiers map[string]map[string][]int) {
-	prevLine := 0 // Ensure line numbers appear once when an id appears on the same line > 1 time
 	tokens.ScanIdentifiers(src, fileName, func(s scanner.Scanner) {
 		id := s.TokenText()
+		if token.IsKeyword(id) {
+			return
+		}
 		if m, ok := identifiers[id]; ok { // Another use of id
-			if _, ok := m[fileName]; ok { // ... in this file
-				if s.Line != prevLine {
-					m[fileName] = append(m[fileName], s.Line)
+			if ln, ok := m[fileName]; ok { // ... in this file
+				if s.Line != ln[len(ln)-1] {
+					m[fileName] = append(ln, s.Line)
 				}
-			} else { // First use of any id in this file
-				m = make(map[string][]int)
-				m[fileName] = append(make([]int, 0, 20), s.Line)
+			} else { // First use of id in this file
+				identifiers[id][fileName] = append(make([]int, 0, 20), s.Line)
 			}
 		} else { // First use of id anywhere
 			m = make(map[string][]int)
 			m[fileName] = append(make([]int, 0, 20), s.Line)
 			identifiers[id] = m
 		}
-		prevLine = s.Line
 	})
 }
