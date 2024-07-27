@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"go-examples/internal/sortmapkeys"
-	"go-examples/internal/tokens"
 	"io"
 	"os"
 	"strings"
 	"text/scanner"
+
+	"github.com/drh/go-examples/internal/sortmapkeys"
+	"github.com/drh/go-examples/internal/tokens"
 )
 
 const minLength = 3
