@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"go-examples/internal/sortedmapkeys"
+	"go-examples/internal/sortmapkeys"
 	"go-examples/internal/tokens"
 	"go/token"
 	"io"
@@ -43,7 +43,7 @@ func main() {
 	// id2 linenumbers...
 	// ...
 	//
-	ids := sortedmapkeys.SortByKey(identifiers)
+	ids := sortmapkeys.SortByKey(identifiers)
 	for _, id := range ids {
 		fmt.Printf("%s", id)
 		print(identifiers[id])
@@ -54,7 +54,7 @@ func print(fileNames map[string][]int) {
 	if lineNumbers, ok := fileNames[""]; ok { // input read from stdin
 		printLineNumbers(lineNumbers, "\t")
 	} else {
-		names := sortedmapkeys.SortByKey(fileNames)
+		names := sortmapkeys.SortByKey(fileNames)
 		for _, name := range names {
 			fmt.Printf("\t%s", name)
 			printLineNumbers(fileNames[name], " ")

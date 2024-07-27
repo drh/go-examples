@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"go-examples/internal/sortedmapkeys"
+	"go-examples/internal/sortmapkeys"
 	"go-examples/internal/tokens"
 	"io"
 	"os"
@@ -38,7 +38,7 @@ func wf(src io.Reader, fileName string) {
 		fmt.Printf("%s:\n", fileName)
 	}
 	// Sort on values
-	keys := sortedmapkeys.SortByValue(frequencies)
+	keys := sortmapkeys.SortByValue(frequencies)
 	for _, k := range keys {
 		fmt.Printf("%d %s\n", frequencies[k], k)
 	}
