@@ -1,4 +1,4 @@
-package sortmapkeys
+package mapkeys
 
 import (
 	"cmp"

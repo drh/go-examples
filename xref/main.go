@@ -7,7 +7,7 @@ import (
 	"os"
 	"text/scanner"
 
-	"github.com/drh/go-examples/internal/sortmapkeys"
+	"github.com/drh/go-examples/internal/mapkeys"
 	"github.com/drh/go-examples/internal/tokens"
 )
 
@@ -44,7 +44,7 @@ func main() {
 	// id2 linenumbers...
 	// ...
 	//
-	ids := sortmapkeys.SortByKey(identifiers)
+	ids := mapkeys.SortByKey(identifiers)
 	for _, id := range ids {
 		fmt.Printf("%s", id)
 		print(identifiers[id])
@@ -55,7 +55,7 @@ func print(fileNames map[string][]int) {
 	if lineNumbers, ok := fileNames[""]; ok { // input read from stdin
 		printLineNumbers(lineNumbers, "\t")
 	} else {
-		names := sortmapkeys.SortByKey(fileNames)
+		names := mapkeys.SortByKey(fileNames)
 		for _, name := range names {
 			fmt.Printf("\t%s", name)
 			printLineNumbers(fileNames[name], " ")
