@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+
+	"github.com/drh/go-examples/internal/slices"
 )
 
 var (
-	up       []bool // up-facing diagonals
-	down     []bool // down-facing diagonals
-	rows     []bool // rows
+	NEdiag []bool //  /-diagonals: for all squares (r,c) on these diagonals,
+	// the differences r-c are constant. NEdiag[r-c+n-1] is true if the square (r,c) is safe.
+	NWdiag []bool //  \-diagonals: for all squares (r,c) on these diagonals,
+	// the sums r+c are constant. NWdiag[r+c] is true if the square (r,c) is safe.
+	row      []bool //  ranks: row[r] is true if any square on rank r is safe.
 	solution []int
 )
 
@@ -28,17 +32,15 @@ func main() {
 		fmt.Printf("too many arguments\n")
 		os.Exit(1)
 	}
-	up = make([]bool, 2*n)
-	down = make([]bool, 2*n)
-	rows = make([]bool, n)
+	NEdiag = slices.Repeat([]bool{true}, 2*n-1)
+	NWdiag = slices.Repeat([]bool{true}, 2*n-1)
+	row = slices.Repeat([]bool{true}, n)
 	solution = make([]int, n)
 
 	queens := make([]chan bool, n)
 	for c := 0; c < n; c++ {
-		queens[c] = make(chan bool)
-	}
-
-	for c, ch := range queens {
+		ch := make(chan bool)
+		queens[c] = ch
 		go queen(c, ch, n)
 	}
 
@@ -60,7 +62,7 @@ func queen(c int, ch chan bool, n int) {
 	for {
 		<-ch
 		for r := 0; r < n; r++ {
-			if test(r, c, n) {
+			if testSquare(r, c, n) {
 				occupy(r, c, n)
 				solution[c] = r + 1
 				ch <- true
@@ -72,14 +74,14 @@ func queen(c int, ch chan bool, n int) {
 	}
 }
 
-func test(r, c, n int) bool {
-	return !rows[r] && !up[r-c+n-1] && !down[r+c+1]
+func testSquare(r, c, n int) bool {
+	return row[r] && NEdiag[r-c+n-1] && NWdiag[r+c]
 }
 
 func occupy(r, c, n int) {
-	rows[r], up[r-c+n-1], down[r+c+1] = true, true, true
+	row[r], NEdiag[r-c+n-1], NWdiag[r+c] = false, false, false
 }
 
 func release(r, c, n int) {
-	rows[r], up[r-c+n-1], down[r+c+1] = false, false, false
+	row[r], NEdiag[r-c+n-1], NWdiag[r+c] = true, true, true
 }
