@@ -25,7 +25,10 @@ func main() {
 	go source(ch)
 	for i := 0; i < n; i++ {
 		prime := <-ch
-		fmt.Print(" ", prime)
+		if i > 0 {
+			fmt.Print(" ")
+		}
+		fmt.Print(prime)
 		out := make(chan int, 1)
 		go filter(prime, ch, out)
 		ch = out
