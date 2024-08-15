@@ -3,9 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
-
-	"github.com/drh/go-examples/internal/slices"
 )
 
 var (
