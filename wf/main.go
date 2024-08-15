@@ -1,13 +1,15 @@
 package main
 
 import (
+	"cmp"
 	"fmt"
 	"io"
+	"maps"
 	"os"
+	"slices"
 	"strings"
 	"text/scanner"
 
-	"github.com/drh/go-examples/internal/mapkeys"
 	"github.com/drh/go-examples/internal/tokens"
 )
 
@@ -23,7 +25,7 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 		}
 	}
-	if len(os.Args) == 1 { // read from stdin
+	if len(os.Args) == 1 { // Read from stdin
 		wf(os.Stdin, "")
 	}
 }
@@ -39,7 +41,8 @@ func wf(src io.Reader, fileName string) {
 		fmt.Printf("%s:\n", fileName)
 	}
 	// Sort on values
-	keys := mapkeys.SortByValue(frequencies)
+	keys := slices.SortedFunc(maps.Keys(frequencies),
+		func(a, b string) int { return cmp.Compare(frequencies[b], frequencies[a]) })
 	for _, k := range keys {
 		fmt.Printf("%d %s\n", frequencies[k], k)
 	}
